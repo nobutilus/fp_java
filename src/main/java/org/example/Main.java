@@ -15,45 +15,14 @@ import java.util.stream.Collectors;
 public class Main {
     public static void main(String[] args) {
         List<String> words = Arrays.asList("ada", "haskell", "scala", "java", "rust");
-//        List<String> ranking = rankedWords(w -> score(w), words);
-//        List<String> ranking = rankedWords(w -> scoreWithBonus(w), words);
-        List<String> ranking = rankedWords(w -> scoreWithPenalty(w), words);
-//         TODO:  関数をリストとして受け取り、簡単にロジックの追加と削除ができるようにしたい(strategy pattern)
+        List<String> ranking = rankedWords(w ->score.apply(w) + bonus.apply(w) - penalty.apply(w), words);
 
         System.out.println(ranking);
     }
 
-     static int score(String word) {
-        return word.replaceAll("a", "").length();
-    }
-
-    static int scoreWithBonus(String word) {
-        int base = score(word);
-        if (word.contains("c")) return base + 5;
-        else return base;
-    }
-
-//    static Comparator<String> scoreComparator = new Comparator<String>() {
-//        public int compare(String w1, String w2) {
-//            return Integer.compare(score(w2), score(w1));
-//        }
-//    };
-
-    static int scoreWithPenalty(String word) {
-        int base = score(word);
-        if (word.contains("s")) return base - 7;
-        return base;
-    }
-
-    static Comparator<String> scoreComparator = (w1, w2) -> Integer.compare(score(w2), score(w1));
-
-
-    //    static Comparator<String> scoreWithBonusComparator = new Comparator<String>() {
-//        public int compare(String w1, String w2) {
-//            return Integer.compare(scoreWithBonus(w2), scoreWithBonus(w1));
-//        }
-//    };
-    static Comparator<String> scoreWithBonusComparator = (w1, w2) -> Integer.compare(scoreWithBonus(w2), scoreWithBonus(w1));
+    static Function<String, Integer> score = word ->  word.replaceAll("a", "").length();
+     static Function<String, Integer> bonus = word -> word.contains("c") ? 5 : 0;
+    static Function<String, Integer> penalty = word -> word.contains("s") ? 7 : 0;
 
 
     static List<String> rankedWords(
